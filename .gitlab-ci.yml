@@ -1,0 +1,65 @@
+image: docker:latest
+
+variables:
+  GIT_CLEAN_FLAGS: none # disable git clean
+
+services:
+  - docker:dind
+
+stages:
+  - setup
+  - install
+  - build
+  - deploy
+
+step-setup:
+  stage: setup
+  before_script:
+    - export DYNAMIC_ENV_VAR=PRODUCTION
+  only:
+    - master
+
+  tags:
+    - app-rest-production
+  script:
+    - echo setting up $DYNAMIC_ENV_VAR
+    - touch .env
+    - sudo cp .env.example .env
+    - echo MONGO_URL=$MONGO_URL_GITLAB >> .env
+    - echo APP_EMAIL_ADDRESS=$APP_EMAIL_ADDRESS_GITLAB >> .env
+    - echo APP_EMAIL_PASSWORD=$APP_EMAIL_PASSWORD_GITLAB >> .env
+    - echo JWT_KEY=$JWT_KEY_GITLAB >> .env
+    - sudo docker image prune -f
+
+step-install:
+  stage: install
+  only:
+    - master
+  tags:
+    - app-rest-production
+  script:
+    - echo installing fresh packages
+    - sudo docker-compose exec app-api yarn
+  allow_failure: true # install command will fail if container is not running or if it is first install
+
+step-build:
+  stage: build
+  only:
+    - master
+
+  tags:
+    - app-rest-production
+  script:
+    - echo building $DYNAMIC_ENV_VAR
+    - sudo docker-compose -f docker-compose.prod.yml build --no-cache
+
+step-deploy:
+  stage: deploy
+  only:
+    - master
+
+  tags:
+    - app-rest-production
+  script:
+    - echo deploying $DYNAMIC_ENV_VAR
+    - sudo docker-compose up -d
