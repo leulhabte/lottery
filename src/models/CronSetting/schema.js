@@ -1,20 +1,22 @@
-import { Schema, Types } from 'mongoose';
-import { lotteryTypeEnum } from './constants';
+import { Schema } from 'mongoose';
+import { currencyEnum, lotteryTypeEnum } from './constants';
 
 const lotterySchema = {
   count: { type: Number },
   initialDepo: { type: Number, required: true },
-  // deployTime: { type: Date },
   type: { type: String, enum: lotteryTypeEnum },
   winners: [{ type: String }],
+  contractAddress: { type: String, required: true },
   updatedAt: { type: Date, default: Date.now() },
+  rate: { type: Number, default: 0.05 },
+  currency: { type: String, enum: currencyEnum, required: true },
 };
 
 const cronSettingSchema = new Schema(
   {
     lottery: [lotterySchema],
-    contractAddress: { type: String, required: true },
-    abi: { type: Types.Mixed },
+    abi: { type: Schema.Types.Mixed },
+    account: { type: String, required: true },
   },
   { timestamps: true }
 );

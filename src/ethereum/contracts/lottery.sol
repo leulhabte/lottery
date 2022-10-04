@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 contract AddisLottery {
     event LogPLayers(Player player);
+    event LogWinner(address winner);
 
     bool suspend;
     bool rollingIn;
@@ -23,9 +24,9 @@ contract AddisLottery {
     }
 
     // Place bet
-    function bet() public payable returns(Player memory){
-        require(msg.value == bettingValue * (1 ether));
-        require(!suspend);
+    function bet() external payable returns(Player memory){
+        require(msg.value == bettingValue, "Invalid amount");
+        require(!suspend, "This transaction is suspended");
         Player memory newPlayer = Player({
             account: payable(msg.sender),
             timestamp: block.timestamp
@@ -46,26 +47,38 @@ contract AddisLottery {
     }
 
     // Pick winner
-    function pickWinner(uint newBettingValue) public payable returns(address){
-        require(msg.sender == manager);
-        require(rollingIn);
+    function pickWinner(uint newBettingValue) external payable returns(address){
+        require(msg.sender == manager, "Invalid Access");
+
+        if(!rollingIn){
+            bettingValue = newBettingValue;
+             return address(0);
+        }
+
         uint rand = random();
         suspend = true;
         address winner = players[rand].account;
 
+        if(winner != address(0x0)){
         (bool sent, ) = winner.call{value: address(this).balance}("");
         require(sent, "Failed to send prize to winner");
 
         delete players;
-        bettingValue = newBettingValue;
         rollingIn = false;
         suspend = false;
 
+        emit LogWinner(winner);
+        }
+        
         return winner;
     }
 
     // Get Lottery Balance
-    function getBalance() public view returns(uint){
+    function getBalance() external view returns(uint){
         return address(this).balance;
+    }
+
+    function getPlayers() external view returns(Player[] memory){
+        return players;
     }
 }

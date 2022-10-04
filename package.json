@@ -9,13 +9,16 @@
   "scripts": {
     "start": "nodemon src/index.js --exec babel-node -e js",
     "compile": "babel-node src/ethereum/compile.js",
+    "deploy": "babel-node src/ethereum/deploy.js",
     "start:prod": "yarn build && NODE_ENV=production node build/index.js",
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./src -s",
     "build": "yarn clean && yarn build-babel",
     "lint": "eslint . --ext .js --color -f table",
     "test": "NODE_ENV=test mocha __tests__ --require @babel/register --recursive",
-    "coverage": "nyc yarn test"
+    "coverage": "nyc yarn test",
+    "seed": "babel-node src/database/seeders/index.js",
+    "task": "babel-node src/tasks/daily/index.js"
   },
   "engines": {
     "node": ">=14"
@@ -27,6 +30,7 @@
     }
   },
   "dependencies": {
+    "@truffle/hdwallet-provider": "^2.0.16",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
@@ -41,6 +45,7 @@
     "http-status": "^1.4.2",
     "joi": "^17.2.1",
     "jsonwebtoken": "^8.5.1",
+    "minimist": "^1.2.6",
     "mongoose": "^5.10.8",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.2",
