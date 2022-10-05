@@ -2,19 +2,29 @@
 pragma solidity ^0.8.0;
 
 contract AddisLottery {
-    event LogPLayers(Player player);
+    event LogPlayers(Player player);
     event LogWinner(address winner);
 
     bool suspend;
     bool rollingIn;
+    bool locked;
+
     address public manager;
     uint public bettingValue;
+
     struct Player {
         address payable account;
         uint timestamp;
     }
 
     Player[] public players;
+
+    modifier noReentrant() {
+        require(!locked, "No re-entrancy");
+        locked = true;
+        _;
+        locked = false;
+    } 
 
     constructor (uint newbettingValue) {
         rollingIn = false;
@@ -35,7 +45,7 @@ contract AddisLottery {
         players.push(newPlayer);
         rollingIn = true;
 
-        emit LogPLayers(newPlayer);
+        emit LogPlayers(newPlayer);
         return newPlayer;
     }
 
@@ -47,7 +57,7 @@ contract AddisLottery {
     }
 
     // Pick winner
-    function pickWinner(uint newBettingValue) external payable returns(address){
+    function pickWinner(uint newBettingValue) external payable noReentrant returns(address){
         require(msg.sender == manager, "Invalid Access");
 
         if(!rollingIn){
@@ -63,6 +73,7 @@ contract AddisLottery {
         (bool sent, ) = winner.call{value: address(this).balance}("");
         require(sent, "Failed to send prize to winner");
 
+        bettingValue = newBettingValue;
         delete players;
         rollingIn = false;
         suspend = false;

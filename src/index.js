@@ -10,7 +10,7 @@ import { deployProcesses } from './processes';
 import { lotteryType } from './models/CronSetting/constants';
 import * as environments from './config/environments';
 
-const dailyTimer = '*/8 * * * * *';
+const dailyTimer = '*/30 * * * * *';
 const dailyTimer2 = '*/10 * * * * *';
 const dailyTimer3 = '*/4 * * * * *';
 // const dailyTimer = '0 */1 * * *';
@@ -27,23 +27,23 @@ const startCronJobs = () => {
     });
   });
 
-  cron.schedule(dailyTimer2, async () => {
-    console.log('Montly cron started.');
-    deployProcesses({
-      childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
-      lotteryType: lotteryType.MONTHLY,
-      maxIteration: 4,
-    });
-  });
+  // cron.schedule(dailyTimer2, async () => {
+  //   console.log('Montly cron started.');
+  //   deployProcesses({
+  //     childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
+  //     lotteryType: lotteryType.MONTHLY,
+  //     maxIteration: 4,
+  //   });
+  // });
 
-  cron.schedule(dailyTimer3, async () => {
-    console.log('Yearly cron started.');
-    deployProcesses({
-      childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
-      lotteryType: lotteryType.YEARLY,
-      maxIteration: 12,
-    });
-  });
+  // cron.schedule(dailyTimer3, async () => {
+  //   console.log('Yearly cron started.');
+  //   deployProcesses({
+  //     childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
+  //     lotteryType: lotteryType.YEARLY,
+  //     maxIteration: 12,
+  //   });
+  // });
 };
 
 const start = async () => {
@@ -52,7 +52,7 @@ const start = async () => {
     console.log(
       `[${environments.nodeEnv}] Server running on localhost:${environments.port}`
     );
-    startCronJobs();
+    // startCronJobs();
   });
 };
 

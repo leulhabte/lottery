@@ -15,7 +15,7 @@
     "build-babel": "babel -d ./build ./src -s",
     "build": "yarn clean && yarn build-babel",
     "lint": "eslint . --ext .js --color -f table",
-    "test": "NODE_ENV=test mocha __tests__ --require @babel/register --recursive",
+    "test": "mocha test --require @babel/register --recursive",
     "coverage": "nyc yarn test",
     "seed": "babel-node src/database/seeders/index.js",
     "task": "babel-node src/tasks/daily/index.js"

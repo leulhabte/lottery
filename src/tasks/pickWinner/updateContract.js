@@ -43,6 +43,7 @@ async function updateContract({ lotteryType, maxIteration }) {
   updateObject['lottery.$.initialDepo'] = resetLottery
     ? lotteryInitialBetValue[lotteryType]
     : increaseRate;
+  updateObject['lottery.$.updatedAt'] = Date.now();
 
   await CronSetting.updateOne(
     { lottery: { $elemMatch: { type: lotteryType } } },
