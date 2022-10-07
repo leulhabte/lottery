@@ -8,7 +8,9 @@ const lotterySchema = {
   winners: [{ type: String }],
   contractAddress: { type: String, required: true },
   updatedAt: { type: Date, default: Date.now() },
-  rate: { type: Number, default: 0.05 },
+  rate: { type: Number, default: 0.05, required: true },
+  priceCut: { type: Number, default: 20 },
+  estimatedGasCost: { type: Number, required: true },
   currency: { type: String, enum: currencyEnum, required: true },
 };
 

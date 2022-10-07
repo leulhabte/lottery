@@ -15,6 +15,7 @@ async function updateContract({ lotteryType, maxIteration }) {
     rate,
     initialDepo,
     currency,
+    priceCut,
   } = Array.from(lottery).find((item) => item.type === lotteryType);
 
   const resetLottery = !(count <= maxIteration);
@@ -27,11 +28,19 @@ async function updateContract({ lotteryType, maxIteration }) {
     contractAddress
   );
 
-  const increaseRate = initialDepo * rate + initialDepo;
+  const increaseRate = web3.utils.toWei(
+    `${initialDepo * rate + initialDepo}`,
+    currency
+  );
+  const currentBalance = await lotteryContract.methods.getBalance().call();
+  const offValue = web3.utils.toWei(
+    `${(priceCut / 100) * currentBalance}`,
+    currency
+  );
 
   const chooseWinner = await lotteryContract.methods
-    .pickWinner(web3.utils.toWei(`${increaseRate.toFixed(10)}`, currency))
-    .send({ from: account, gas: '1000000' });
+    .pickWinner(`${increaseRate}`, `${offValue}`)
+    .send({ from: account, gas: '3000000' });
 
   // Listen to emitted event
   const lotteryWinner = chooseWinner.events.LogWinner?.returnValues?.winner;

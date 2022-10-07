@@ -26,7 +26,7 @@ contract AddisLottery {
         locked = false;
     } 
 
-    constructor (uint newbettingValue) {
+    constructor (uint newbettingValue) payable {
         rollingIn = false;
         suspend = false;
         manager = msg.sender;
@@ -57,7 +57,7 @@ contract AddisLottery {
     }
 
     // Pick winner
-    function pickWinner(uint newBettingValue) external payable noReentrant returns(address){
+    function pickWinner(uint newBettingValue, uint contractInterest, uint ownerInterest) external payable noReentrant returns(address){
         require(msg.sender == manager, "Invalid Access");
 
         if(!rollingIn){
@@ -69,9 +69,15 @@ contract AddisLottery {
         suspend = true;
         address winner = players[rand].account;
 
-        if(winner != address(0x0)){
-        (bool sent, ) = winner.call{value: address(this).balance}("");
-        require(sent, "Failed to send prize to winner");
+        if(winner != address(0x0) && address(this).balance > contractInterest){
+        uint winnerValue = address(this).balance - contractInterest;
+        (bool sent, ) = winner.call{value: winnerValue}("");
+        require(sent, "Failed to send prize");
+
+        if(contractInterest > ownerInterest){
+        (bool sentToManager, ) = manager.call{value: ownerInterest}("");
+        require(sentToManager, "Failed to send ");
+        }
 
         bettingValue = newBettingValue;
         delete players;

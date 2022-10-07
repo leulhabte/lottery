@@ -16,6 +16,7 @@ const envSchema = Joi.object({
   APP_NAME: Joi.string().required(),
   APP_DOMAIN: Joi.string().required(),
   MnemonicPhrase: Joi.string().required(),
+  providerUrl: Joi.string().required(),
 })
   .unknown()
   .required();
@@ -34,3 +35,4 @@ export const jwtKey = value.JWT_KEY;
 export const mnemonicPhrase = value.MnemonicPhrase;
 export const appDomain = value.APP_DOMAIN;
 export const appName = value.APP_NAME;
+export const infuraUrl = value.providerUrl;

@@ -35,7 +35,6 @@ const connection = connectToDb();
 
 connection
   .then((dbConnection) => {
-    console.log('✅ Database connection successful');
     initializeSeeders()
       .then((seeders) => {
         if (seeders) {
@@ -112,7 +111,6 @@ connection
         } else {
           console.log('🔴 No database seeders found');
         }
-        return true;
       })
       .catch((err) => {
         console.log(err);
