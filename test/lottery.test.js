@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+// /* eslint-disable no-undef */
 import ganache from 'ganache-cli';
 import Web3 from 'web3';
 import assert from 'assert';
@@ -9,17 +9,14 @@ const web3 = new Web3(ganache.provider());
 let lottery;
 let accounts;
 const initialValue = '5';
-const estimatedGasCost = '0.000000000003';
+const gasCutRate = '0.1';
 
 beforeEach(async () => {
   accounts = await web3.eth.getAccounts();
   lottery = await new web3.eth.Contract(abi)
     .deploy({
       data: evm.bytecode.object,
-      arguments: [
-        web3.utils.toWei(initialValue),
-        web3.utils.toWei(estimatedGasCost),
-      ],
+      arguments: [web3.utils.toWei(initialValue)],
     })
     .send({ from: accounts[0], gas: '3000000' });
 });
@@ -32,6 +29,7 @@ describe('Lottery', () => {
   it('place bet, pick winner and set new betting value', async () => {
     const player = accounts[1];
     const offValue = web3.utils.toWei(`${0.02 * initialValue}`);
+    const gasCut = web3.utils.toWei(`${gasCutRate * offValue}`);
     const nextBettingValue = web3.utils.toWei('10', 'ether');
 
     const initialContractBalance = await lottery.methods.getBalance().call();
@@ -44,7 +42,7 @@ describe('Lottery', () => {
     });
 
     /* Picking a winner and setting the new betting value. */
-    await lottery.methods.pickWinner(nextBettingValue, offValue).send({
+    await lottery.methods.pickWinner(nextBettingValue, offValue, gasCut).send({
       from: accounts[0],
       gas: '3000000',
     });

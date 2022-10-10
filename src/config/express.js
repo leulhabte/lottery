@@ -5,10 +5,17 @@ import compress from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 import httpStatus from 'http-status';
+import cookieParser from 'cookie-parser';
+import formidableMiddleware from 'express-formidable';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+
+import pkg from '../../package.json';
 import winstonLogger from './winston';
 import * as environments from './environments';
 import APIError from '../errors/APIError';
 import routes from './routes';
+import { admin, adminRouter } from './adminBro';
 
 const app = express();
 
@@ -28,6 +35,27 @@ winstonLogger.stream = {
 if (environments.nodeEnv !== 'test') {
   app.use(morgan('combined', { stream: winstonLogger.stream }));
 }
+
+app.use(
+  admin.options.rootPath,
+  cookieParser(),
+  session({
+    secret: pkg.name,
+    proxy: true,
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongoUrl: environments.mongoUrl,
+      collection: 'sessions',
+      touchAfter: 24 * 3600,
+      autoRemove: 'native',
+      useUnifiedTopology: true,
+    }),
+  }),
+  formidableMiddleware()
+);
+
+app.use(admin.options.rootPath, adminRouter);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

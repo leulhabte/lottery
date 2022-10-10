@@ -17,6 +17,10 @@ const envSchema = Joi.object({
   APP_DOMAIN: Joi.string().required(),
   MnemonicPhrase: Joi.string().required(),
   providerUrl: Joi.string().required(),
+  ADMIN_EMAIL: Joi.string().required(),
+  ADMIN_PASSWORD: Joi.string().required(),
+  COOKIE_PASSWORD: Joi.string().required(),
+  COOKIE_NAME: Joi.string().required(),
 })
   .unknown()
   .required();
@@ -36,3 +40,7 @@ export const mnemonicPhrase = value.MnemonicPhrase;
 export const appDomain = value.APP_DOMAIN;
 export const appName = value.APP_NAME;
 export const infuraUrl = value.providerUrl;
+export const adminEmail = value.ADMIN_EMAIL;
+export const adminPass = value.ADMIN_PASSWORD;
+export const cookieName = value.COOKIE_NAME;
+export const cookiePassword = value.COOKIE_PASSWORD;

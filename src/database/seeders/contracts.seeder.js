@@ -39,13 +39,11 @@ const seed = async (force) => {
           const lotteries = [];
           let contractAbi;
           let providerAccount;
-          const estimatedGasCost = '0.000000000003';
 
           await Promise.all(
             lotteryTypeEnum.map(async (type) => {
               const { address, abi, account } = await deploy({
                 initialValue: `${lotteryInitialBetValue[type]}`,
-                estimatedGasCost,
               });
               contractAbi = abi;
               providerAccount = account;
@@ -56,7 +54,7 @@ const seed = async (force) => {
                 winners: [],
                 contractAddress: address,
                 currency: currency.ether,
-                estimatedGasCost,
+                initialPotValue: 0,
               };
 
               lotteries.push(lottery);

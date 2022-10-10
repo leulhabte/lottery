@@ -1,13 +1,14 @@
 {
   "presets": [
+    "@babel/preset-react",
     [
       "@babel/preset-env",
       {
-        "targets" : {
+        "targets": {
           "esmodules": true
         }
       }
     ]
-  ],
-  "plugins": ["@babel/transform-runtime"]
+  ]
+  // "plugins": ["@babel/transform-runtime"]
 }
