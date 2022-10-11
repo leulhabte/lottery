@@ -17,10 +17,10 @@ step-setup:
   before_script:
     - export DYNAMIC_ENV_VAR=PRODUCTION
   only:
-    - master
+    - main
 
   tags:
-    - app-rest-production
+    - lottery-app-rest-production
   script:
     - echo setting up $DYNAMIC_ENV_VAR
     - touch .env
@@ -29,14 +29,20 @@ step-setup:
     - echo APP_EMAIL_ADDRESS=$APP_EMAIL_ADDRESS_GITLAB >> .env
     - echo APP_EMAIL_PASSWORD=$APP_EMAIL_PASSWORD_GITLAB >> .env
     - echo JWT_KEY=$JWT_KEY_GITLAB >> .env
+    - echo MnemonicPhrase=$MnemonicPhrase_GITLAB >> .env
+    - echo providerUrl=$providerUrl_GITLAB >> .env
+    - echo ADMIN_EMAIL=$ADMIN_EMAIL_GITLAB >> .env
+    - echo ADMIN_PASSWORD=$ADMIN_PASSWORD_GITLAB >> .env
+    - echo COOKIE_NAME=$COOKIE_NAME_GITLAB >> .env
+    - echo COOKIE_PASSWORD=$COOKIE_PASSWORD_GITLAB >> .env
     - sudo docker image prune -f
 
 step-install:
   stage: install
   only:
-    - master
+    - main
   tags:
-    - app-rest-production
+    - lottery-app-rest-production
   script:
     - echo installing fresh packages
     - sudo docker-compose exec app-api yarn
@@ -45,10 +51,10 @@ step-install:
 step-build:
   stage: build
   only:
-    - master
+    - main
 
   tags:
-    - app-rest-production
+    - lottery-app-rest-production
   script:
     - echo building $DYNAMIC_ENV_VAR
     - sudo docker-compose -f docker-compose.prod.yml build --no-cache
@@ -56,10 +62,10 @@ step-build:
 step-deploy:
   stage: deploy
   only:
-    - master
+    - main
 
   tags:
-    - app-rest-production
+    - lottery-app-rest-production
   script:
     - echo deploying $DYNAMIC_ENV_VAR
     - sudo docker-compose up -d

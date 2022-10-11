@@ -18,6 +18,32 @@ export const admin = new AdminJs({
       resource: CronSettings,
       options: {
         properties: {
+          account: {
+            isVisible: false,
+          },
+          'lottery.contractAddress': { isVisible: false },
+          'lottery.currency': { isVisible: false },
+          'lottery.initialPotValue': { isVisible: false },
+          'lottery.winners': {
+            isVisible: false,
+          },
+          'lottery.updatedAt': { isVisible: false },
+          createdAt: {
+            isVisible: {
+              list: true,
+              edit: false,
+              show: true,
+              delete: false,
+            },
+          },
+          updatedAt: {
+            isVisible: {
+              list: true,
+              edit: false,
+              show: true,
+              delete: false,
+            },
+          },
           abi: {
             isVisible: false,
           },

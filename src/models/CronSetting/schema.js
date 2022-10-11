@@ -3,7 +3,7 @@ import { currencyEnum, lotteryTypeEnum } from './constants';
 
 const lotterySchema = {
   count: { type: Number },
-  initialDepo: { type: Number, required: true },
+  initialBettingValue: { type: Number, required: true },
   type: { type: String, enum: lotteryTypeEnum },
   winners: [{ type: String }],
   contractAddress: { type: String, required: true },

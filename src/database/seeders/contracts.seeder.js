@@ -49,7 +49,7 @@ const seed = async (force) => {
               providerAccount = account;
               const lottery = {
                 count: 1,
-                initialDepo: lotteryInitialBetValue[type],
+                initialBettingValue: lotteryInitialBetValue[type],
                 type,
                 winners: [],
                 contractAddress: address,

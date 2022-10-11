@@ -13,11 +13,12 @@ async function updateContract({ lotteryType, maxIteration }) {
     count,
     winners,
     rate,
-    initialDepo,
-    currency,
     priceCut,
+    gasCut,
+    currency,
   } = Array.from(lottery).find((item) => item.type === lotteryType);
 
+  // MAX ITRATION CHECK
   const resetLottery = !(count <= maxIteration);
 
   // eslint-disable-next-line no-console
@@ -28,31 +29,49 @@ async function updateContract({ lotteryType, maxIteration }) {
     contractAddress
   );
 
-  const increaseRate = web3.utils.toWei(
-    `${initialDepo * rate + initialDepo}`,
-    currency
-  );
+  const initialBettingValue = await lotteryContract.methods
+    .bettingValue()
+    .call();
+
+  const nextBettingValue =
+    parseInt(initialBettingValue) * rate + parseInt(initialBettingValue);
+
   const currentBalance = await lotteryContract.methods.getBalance().call();
-  const offValue = web3.utils.toWei(
-    `${(priceCut / 100) * currentBalance}`,
-    currency
-  );
+
+  const offValue = parseInt((priceCut / 100) * parseInt(currentBalance));
+
+  const ownerCut = parseInt(offValue * (gasCut / 100));
 
   const chooseWinner = await lotteryContract.methods
-    .pickWinner(`${increaseRate}`, `${offValue}`)
+    .pickWinner(
+      resetLottery
+        ? `${web3.utils.toWei(
+            `${lotteryInitialBetValue[lotteryType]}`,
+            currency
+          )}`
+        : `${parseInt(nextBettingValue)}`,
+      `${offValue}`,
+      `${ownerCut}`
+    )
     .send({ from: account, gas: '3000000' });
 
   // Listen to emitted event
   const lotteryWinner = chooseWinner.events.LogWinner?.returnValues?.winner;
 
+  const initialPotValue = await lotteryContract.methods.getBalance().call();
+  const bettingValue = await lotteryContract.methods.bettingValue().call();
+
+  // Update database
   if (lotteryWinner) {
     updateObject['lottery.$.winners'] = [lotteryWinner, ...winners];
   }
   updateObject['lottery.$.count'] = resetLottery ? 1 : count + 1;
-  updateObject['lottery.$.initialDepo'] = resetLottery
+  updateObject['lottery.$.initialBettingValue'] = resetLottery
     ? lotteryInitialBetValue[lotteryType]
-    : increaseRate;
+    : web3.utils.fromWei(bettingValue, currency);
   updateObject['lottery.$.updatedAt'] = Date.now();
+  updateObject['lottery.$.initialPotValue'] =
+    web3.utils.fromWei(initialPotValue) || 0;
 
   await CronSetting.updateOne(
     { lottery: { $elemMatch: { type: lotteryType } } },

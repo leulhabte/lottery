@@ -1,4 +1,4 @@
-FROM node:14.15.5-buster
+FROM node:16.17-buster
 
 RUN apt-get update
 

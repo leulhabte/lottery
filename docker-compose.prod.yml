@@ -1,12 +1,12 @@
 version: '3.2'
 
 services:
-  app-api:
+  tombola-back-end:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    image: app-api:latest
-    container_name: app-api-container
+    image: tombola-back-end:latest
+    container_name: tombola-back-end-container
     restart: unless-stopped
     env_file: .env
     volumes:
