@@ -43,6 +43,7 @@
     "cors": "^2.8.5",
     "date-fns": "^2.29.3",
     "dotenv": "^8.2.0",
+    "eslint-plugin-react": "^7.31.10",
     "express": "^4.17.1",
     "express-formidable": "^1.2.0",
     "express-session": "^1.17.3",
