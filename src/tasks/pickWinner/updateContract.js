@@ -19,7 +19,7 @@ async function updateContract({ lotteryType, maxIteration }) {
   } = Array.from(lottery).find((item) => item.type === lotteryType);
 
   // MAX ITRATION CHECK
-  const resetLottery = !(count <= maxIteration);
+  const resetLottery = !(count < maxIteration);
 
   // eslint-disable-next-line no-console
   if (resetLottery) console.log(`Full ${lotteryType} complete.`);
@@ -34,13 +34,17 @@ async function updateContract({ lotteryType, maxIteration }) {
     .call();
 
   const nextBettingValue =
-    parseInt(initialBettingValue) * rate + parseInt(initialBettingValue);
+    parseInt(initialBettingValue, 10) * rate +
+    parseInt(initialBettingValue, 10);
 
   const currentBalance = await lotteryContract.methods.getBalance().call();
 
-  const offValue = parseInt((priceCut / 100) * parseInt(currentBalance));
+  const offValue = parseInt(
+    (priceCut / 100) * parseInt(currentBalance, 10),
+    10
+  );
 
-  const ownerCut = parseInt(offValue * (gasCut / 100));
+  const ownerCut = parseInt(offValue * (gasCut / 100), 10);
 
   const chooseWinner = await lotteryContract.methods
     .pickWinner(
@@ -49,7 +53,7 @@ async function updateContract({ lotteryType, maxIteration }) {
             `${lotteryInitialBetValue[lotteryType]}`,
             currency
           )}`
-        : `${parseInt(nextBettingValue)}`,
+        : `${parseInt(nextBettingValue, 10)}`,
       `${offValue}`,
       `${ownerCut}`
     )

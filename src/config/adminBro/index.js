@@ -146,8 +146,8 @@ export const admin = new AdminJs({
 export const adminRouter = AdminExpress.buildAuthenticatedRouter(
   admin,
   {
-    cookieName: cookieName,
-    cookiePassword: cookiePassword,
+    cookieName,
+    cookiePassword,
     authenticate: async (email, password) => {
       const user = await Users.findOne({ email });
       if (user) {

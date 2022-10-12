@@ -25,16 +25,12 @@ step-setup:
     - echo setting up $DYNAMIC_ENV_VAR
     - touch .env
     - sudo cp .env.example .env
-    - echo MONGO_URL=$MONGO_URL_GITLAB >> .env
-    - echo APP_EMAIL_ADDRESS=$APP_EMAIL_ADDRESS_GITLAB >> .env
-    - echo APP_EMAIL_PASSWORD=$APP_EMAIL_PASSWORD_GITLAB >> .env
-    - echo JWT_KEY=$JWT_KEY_GITLAB >> .env
-    - echo MnemonicPhrase=$MnemonicPhrase_GITLAB >> .env
-    - echo providerUrl=$providerUrl_GITLAB >> .env
-    - echo ADMIN_EMAIL=$ADMIN_EMAIL_GITLAB >> .env
-    - echo ADMIN_PASSWORD=$ADMIN_PASSWORD_GITLAB >> .env
-    - echo COOKIE_NAME=$COOKIE_NAME_GITLAB >> .env
-    - echo COOKIE_PASSWORD=$COOKIE_PASSWORD_GITLAB >> .env
+    - echo MnemonicPhrase=$MnemonicPhrase >> .env
+    - echo providerUrl=$providerUrl >> .env
+    - echo ADMIN_EMAIL=$ADMIN_EMAIL >> .env
+    - echo ADMIN_PASSWORD=$ADMIN_PASSWORD >> .env
+    - echo COOKIE_NAME=$COOKIE_NAME >> .env
+    - echo COOKIE_PASSWORD=$COOKIE_PASSWORD >> .env
     - sudo docker image prune -f
 
 step-install:

@@ -1,4 +1,4 @@
-// /* eslint-disable no-undef */
+/* eslint-disable no-undef */
 import ganache from 'ganache-cli';
 import Web3 from 'web3';
 import assert from 'assert';

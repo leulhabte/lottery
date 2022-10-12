@@ -7,43 +7,32 @@ import cron from 'node-cron';
 import connectToDb from './config/mongoose';
 import app from './config/express';
 import { deployProcesses } from './processes';
-import { lotteryType } from './models/CronSetting/constants';
+import { lotteryTypeEnum } from './models/CronSetting/constants';
 import * as environments from './config/environments';
+import CronSetting from './models/CronSetting';
 
-const dailyTimer = '*/10 * * * * *';
-const monthlyTimer = '*/20 * * * * *';
-const yearlyTimer = '*/30 * * * * *';
-// const dailyTimer = '0 */1 * * *';
-// const monthlyTimer = '0 0 * * 0';
-// const yearlyTimer = '0 0 1 * *';
+/**
+ * It takes the cron setting from the database and starts a cron job for each lottery type
+ */
+const startCronJobs = async () => {
+  const cronSetting = await CronSetting.findOne({});
 
-const startCronJobs = () => {
-  cron.schedule(dailyTimer, async () => {
-    console.log('Hourly cron started.');
-    deployProcesses({
-      childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
-      lotteryType: lotteryType.DAILY,
-      maxIteration: 24,
+  if (cronSetting?.lottery) {
+    lotteryTypeEnum.forEach((type) => {
+      const currentLottery = cronSetting.lottery.find(
+        (item) => item.type === type
+      );
+      if (currentLottery)
+        cron.schedule(currentLottery.cronTime, async () => {
+          console.log(`${type} cron started.`);
+          deployProcesses({
+            childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
+            lotteryType: type,
+            maxIteration: currentLottery.maxIteration,
+          });
+        });
     });
-  });
-
-  cron.schedule(monthlyTimer, async () => {
-    console.log('Daily cron started.');
-    deployProcesses({
-      childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
-      lotteryType: lotteryType.MONTHLY,
-      maxIteration: 4,
-    });
-  });
-
-  cron.schedule(yearlyTimer, async () => {
-    console.log('Monthly cron started.');
-    deployProcesses({
-      childPath: path.resolve(__dirname, 'tasks', 'pickWinner'),
-      lotteryType: lotteryType.YEARLY,
-      maxIteration: 12,
-    });
-  });
+  }
 };
 
 const start = async () => {
@@ -52,7 +41,7 @@ const start = async () => {
     console.log(
       `[${environments.nodeEnv}] Server running on localhost:${environments.port}`
     );
-    // startCronJobs();
+    startCronJobs();
   });
 };
 

@@ -13,6 +13,8 @@ const lotterySchema = {
   gasCut: { type: Number, required: true, default: 10 },
   currency: { type: String, enum: currencyEnum, required: true },
   initialPotValue: { type: String },
+  maxIteration: { type: Number, required: true },
+  cronTime: { type: String, required: true },
 };
 
 const cronSettingSchema = new Schema(

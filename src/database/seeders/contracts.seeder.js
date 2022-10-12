@@ -1,8 +1,10 @@
 import { startSession } from 'mongoose';
 import CronSettings from '../../models/CronSetting';
 import {
+  cronScheduleTime,
   currency,
   lotteryInitialBetValue,
+  lotteryMaxCount,
   lotteryTypeEnum,
 } from '../../models/CronSetting/constants';
 import { modelNames } from '../../models/constants';
@@ -55,6 +57,8 @@ const seed = async (force) => {
                 contractAddress: address,
                 currency: currency.ether,
                 initialPotValue: 0,
+                maxIteration: lotteryMaxCount[type],
+                cronTime: cronScheduleTime[type],
               };
 
               lotteries.push(lottery);

@@ -1,8 +1,8 @@
 import { startSession } from 'mongoose';
+import bcrypt from 'bcrypt';
 import Users from '../../models/Users';
 import { modelNames } from '../../models/constants';
 import { adminEmail, adminPass } from '../../config/environments';
-import bcrypt from 'bcrypt';
 
 // order of excution
 const order = 2;
