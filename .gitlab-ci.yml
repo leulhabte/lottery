@@ -20,7 +20,7 @@ step-setup:
     - main
 
   tags:
-    - lottery-app-rest-production
+    - lottery-app-rest
   script:
     - echo setting up $DYNAMIC_ENV_VAR
     - touch .env
@@ -38,7 +38,7 @@ step-install:
   only:
     - main
   tags:
-    - lottery-app-rest-production
+    - lottery-app-rest
   script:
     - echo installing fresh packages
     - sudo docker-compose exec app-api yarn
@@ -50,7 +50,7 @@ step-build:
     - main
 
   tags:
-    - lottery-app-rest-production
+    - lottery-app-rest
   script:
     - echo building $DYNAMIC_ENV_VAR
     - sudo docker-compose -f docker-compose.prod.yml build --no-cache
@@ -61,7 +61,7 @@ step-deploy:
     - main
 
   tags:
-    - lottery-app-rest-production
+    - lottery-app-rest
   script:
     - echo deploying $DYNAMIC_ENV_VAR
     - sudo docker-compose up -d
